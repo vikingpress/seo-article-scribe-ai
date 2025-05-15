@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,16 +53,13 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				}
+				ironman: {
+					red: '#EA384C',
+					gold: '#F97316',
+					gray: '#8E9196',
+					blue: '#0EA5E9',
+					dark: '#221F26',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +82,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-subtle': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' }
+				},
+				'glow': {
+					'0%, 100%': { boxShadow: '0 0 15px rgba(10, 178, 255, 0.4)' },
+					'50%': { boxShadow: '0 0 25px rgba(10, 178, 255, 0.7)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-subtle': 'pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'glow': 'glow 2s ease-in-out infinite'
 			}
 		}
 	},

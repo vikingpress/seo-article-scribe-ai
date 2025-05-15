@@ -73,7 +73,7 @@
   }
 
   body {
-    @apply bg-background text-foreground bg-jarvis-pattern bg-cover bg-fixed;
+    @apply bg-background text-foreground bg-gradient-to-br from-gray-900 to-gray-800 bg-fixed;
     background-blend-mode: overlay;
   }
 
