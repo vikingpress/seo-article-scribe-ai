@@ -29,7 +29,10 @@ export async function generateSEOArticle({
     - Desarrollar respuestas completas y detalladas para cada pregunta
     - Si la palabra clave parece ser sobre "mejores" o "top" servicios/productos/lugares, crear una lista ordenada o numerada
     - Resaltar palabras y frases importantes con etiquetas <strong>
+    - INCLUIR al menos una tabla HTML comparativa cuando sea apropiado para el tema
+    - INCLUIR viñetas (listas) para presentar múltiples puntos o características
     - Optimizar el contenido para la palabra clave principal: "${keyword}"
+    - Usar divs con clases personalizadas para destacar información importante (como divs tipo "nota" o "advertencia")
     - Configurar cualquier enlace externo con atributos rel="noopener nofollow"
     - Escribir al menos dos párrafos por cada subtítulo
     - Usar un tono amistoso y profesional
@@ -50,6 +53,12 @@ export async function generateSEOArticle({
     ${formattedSources || "No se proporcionaron fuentes. Genera respuestas basadas en conocimiento general sobre el tema, pero indica claramente que se recomienda consultar fuentes específicas para información más precisa."}
     
     Genera un artículo HTML completo que responda a todas las preguntas de manera detallada.
+    IMPORTANTE: Incluye elementos visuales como:
+    1. Al menos una tabla HTML comparativa para datos o características
+    2. Listas con viñetas para puntos importantes
+    3. Contenido estructurado en secciones bien definidas
+    4. Usa divs con estilos personalizados para destacar consejos o advertencias
+
     Si la palabra clave contiene términos como "mejores", "top", o parece solicitar una comparación (ej: "mejores dentistas de arica chile"),
     incluye un listado ordenado con opciones basándote en la información de las fuentes proporcionadas.
     No incluyas introducciones que mencionen "basado en las fuentes proporcionadas" o similares.
@@ -104,24 +113,32 @@ export async function improveSEOArticle(
 ): Promise<ArticleResult> {
   try {
     const systemPrompt = `Eres un especialista en SEO y redacción web. 
-    Tu tarea es mejorar el artículo HTML proporcionado para optimizarlo mejor para SEO.
+    Tu tarea es mejorar el artículo HTML proporcionado para optimizarlo mejor para SEO y hacerlo visualmente atractivo.
     
     Realiza las siguientes mejoras:
     - Asegúrate de que la densidad de palabras clave es óptima (no sobrecargada)
     - Mejora el título y los subtítulos para mayor impacto y SEO
     - Si la palabra clave es sobre "mejores" o comparaciones, asegúrate de que el artículo incluye una lista ordenada clara
+    - Agrega o mejora elementos visuales como tablas HTML, listas con viñetas y bloques destacados
     - Agrega marcado semántico adicional donde sea apropiado
     - Mejora las llamadas a la acción
     - Asegúrate de que los párrafos tengan un flujo natural
     - Refuerza la coherencia del texto
+    - INCLUIR al menos una tabla HTML comparativa cuando sea apropiado para el tema
+    - INCLUIR viñetas (listas) para presentar múltiples puntos o características
     
     Mantén el formato HTML y asegúrate de que el código sea limpio.`;
 
     const userPrompt = `
     PALABRA CLAVE PRINCIPAL: ${keyword}
     
-    Mejora el siguiente artículo HTML para optimizarlo para SEO, manteniendo su estructura y formato:
+    Mejora el siguiente artículo HTML para optimizarlo para SEO y hacerlo más atractivo visualmente:
     
+    1. Si no existe ya, AÑADE al menos una tabla HTML para presentar información comparativa
+    2. Si no tiene suficientes, AÑADE más listas con viñetas para mejorar la legibilidad
+    3. Usa estilos para resaltar contenido importante
+    
+    ARTÍCULO HTML:
     ${htmlContent}`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {

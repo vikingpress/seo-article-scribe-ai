@@ -137,6 +137,28 @@
     @apply list-decimal;
   }
 
+  .html-preview table {
+    @apply w-full border-collapse mb-6;
+  }
+  
+  .html-preview table th {
+    @apply bg-muted p-2 text-left border border-border;
+  }
+  
+  .html-preview table td {
+    @apply p-2 border border-border;
+  }
+  
+  .html-preview .nota,
+  .html-preview .tip {
+    @apply bg-secondary/10 p-4 rounded-md border-l-4 border-secondary mb-4;
+  }
+  
+  .html-preview .advertencia,
+  .html-preview .warning {
+    @apply bg-destructive/10 p-4 rounded-md border-l-4 border-destructive mb-4;
+  }
+
   .tech-glow {
     box-shadow: 0 0 15px rgba(10, 178, 255, 0.4);
   }
