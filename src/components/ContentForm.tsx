@@ -6,11 +6,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ApiKeyInput } from "@/components/ApiKeyInput";
-import { useArticleGeneration } from "@/hooks/useArticleGeneration";
+import { useArticleGeneration, ArticleType } from "@/hooks/useArticleGeneration";
 import { ArticlePreview } from "@/components/ArticlePreview";
 import { parseQuestions, loadLocalStorage, saveLocalStorage } from "@/lib/utils";
 import { Play, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function ContentForm() {
   const [apiKey, setApiKey] = useState("");
@@ -19,6 +26,7 @@ export function ContentForm() {
   const [source2, setSource2] = useState("");
   const [keyword, setKeyword] = useState("");
   const [showSourceWarning, setShowSourceWarning] = useState(false);
+  const [articleType, setArticleType] = useState<ArticleType>("informational");
 
   const {
     articleData,
@@ -39,6 +47,7 @@ export function ContentForm() {
     setSource1(loadLocalStorage("seo_source1", ""));
     setSource2(loadLocalStorage("seo_source2", ""));
     setKeyword(loadLocalStorage("seo_keyword", ""));
+    setArticleType(loadLocalStorage("seo_article_type", "informational") as ArticleType);
   }, []);
 
   // Guardar API Key en localStorage
@@ -53,6 +62,7 @@ export function ContentForm() {
     saveLocalStorage("seo_source1", source1);
     saveLocalStorage("seo_source2", source2);
     saveLocalStorage("seo_keyword", keyword);
+    saveLocalStorage("seo_article_type", articleType);
 
     const parsedQuestions = parseQuestions(questionsText);
     const sources = [source1, source2].filter(Boolean);
@@ -63,7 +73,7 @@ export function ContentForm() {
     }
     
     setShowSourceWarning(false);
-    await generateArticle(apiKey, parsedQuestions, sources, keyword);
+    await generateArticle(apiKey, parsedQuestions, sources, keyword, articleType);
   };
 
   const handleImprove = async () => {
@@ -89,10 +99,35 @@ export function ContentForm() {
               className="bg-muted border-muted"
             />
           </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="article-type" className="text-sm font-medium text-primary">
+              Tipo de artículo
+            </Label>
+            <Select 
+              value={articleType} 
+              onValueChange={(value) => setArticleType(value as ArticleType)}
+            >
+              <SelectTrigger id="article-type" className="bg-muted border-muted">
+                <SelectValue placeholder="Selecciona el tipo de artículo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="informational">Informacional (Preguntas y Respuestas)</SelectItem>
+                <SelectItem value="directory">Directorio (Listado de Empresas/Servicios)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {articleType === "informational" 
+                ? "Artículo basado en preguntas y respuestas con formato informativo" 
+                : "Directorio de empresas, profesionales o servicios con sus datos de contacto"}
+            </p>
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="questions" className="text-sm font-medium text-primary">
-              Preguntas de "People Also Ask"
+              {articleType === "informational" 
+                ? "Preguntas de \"People Also Ask\"" 
+                : "Preguntas para la sección FAQ (al final)"}
             </Label>
             <Textarea
               id="questions"
@@ -102,7 +137,9 @@ export function ContentForm() {
               onChange={(e) => setQuestionsText(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Se convertirán en subtítulos H3 en el artículo generado
+              {articleType === "informational" 
+                ? "Se convertirán en subtítulos H3 en el artículo generado"
+                : "Se incluirán como FAQ al final del directorio"}
             </p>
           </div>
 
@@ -112,7 +149,9 @@ export function ContentForm() {
             </Label>
             <Textarea
               id="source1"
-              placeholder="Pega aquí el contenido de la fuente..."
+              placeholder={articleType === "informational" 
+                ? "Pega aquí el contenido de la fuente..." 
+                : "Pega información sobre las empresas/servicios aquí..."}
               className="min-h-[100px] bg-muted border-muted"
               value={source1}
               onChange={(e) => setSource1(e.target.value)}

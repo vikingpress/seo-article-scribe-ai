@@ -9,6 +9,8 @@ export interface ArticleData {
   readingTime: number;
 }
 
+export type ArticleType = "informational" | "directory";
+
 export const useArticleGeneration = () => {
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -19,7 +21,8 @@ export const useArticleGeneration = () => {
     apiKey: string,
     questions: string[],
     sources: string[],
-    keyword: string
+    keyword: string,
+    articleType: ArticleType
   ) => {
     if (!apiKey) {
       toast({
@@ -65,6 +68,7 @@ export const useArticleGeneration = () => {
         questions,
         sources,
         keyword,
+        articleType,
       });
 
       setArticleData(result);

@@ -1,9 +1,11 @@
 
+
 interface GenerateArticleParams {
   apiKey: string;
   questions: string[];
   sources: string[];
   keyword: string;
+  articleType: "informational" | "directory";
 }
 
 interface ArticleResult {
@@ -17,10 +19,12 @@ export async function generateSEOArticle({
   questions,
   sources,
   keyword,
+  articleType,
 }: GenerateArticleParams): Promise<ArticleResult> {
   try {
     // Crear el prompt para la generación del artículo
-    const systemPrompt = `Eres un especialista en SEO y redacción web. Genera un artículo HTML optimizado para WordPress 
+    const systemPrompt = articleType === "informational" 
+      ? `Eres un especialista en SEO y redacción web. Genera un artículo HTML optimizado para WordPress 
     basándote en las preguntas de "People Also Ask" de Google sobre el tema proporcionado. 
     IMPORTANTE: DEBES utilizar EXCLUSIVAMENTE las fuentes proporcionadas como base de conocimiento.
     
@@ -37,13 +41,37 @@ export async function generateSEOArticle({
     - Escribir al menos dos párrafos por cada subtítulo
     - Usar un tono amistoso y profesional
     - IMPORTANTE: Utilizar SOLAMENTE información basada en las fuentes proporcionadas
+    - Generar código HTML limpio y semánticamente correcto`
+      : `Eres un especialista en SEO y redacción web. Genera un artículo HTML tipo DIRECTORIO optimizado para WordPress
+    sobre el tema proporcionado. 
+    IMPORTANTE: DEBES utilizar EXCLUSIVAMENTE las fuentes proporcionadas como base de conocimiento.
+    
+    El artículo debe seguir estas reglas:
+    - Crear una introducción general sobre el tipo de servicio/profesionales/empresas
+    - Listar los establecimientos, profesionales o empresas en formato de directorio, extraídos de las fuentes
+    - Para cada entrada del directorio, incluir:
+      * Nombre del profesional/empresa como subtítulo H3
+      * Descripción detallada de servicios/especialidades
+      * Datos de contacto (dirección, teléfono, sitio web, redes sociales) si están disponibles
+      * Información sobre horarios si está disponible
+      * Valoración o reseñas si están disponibles
+    - Añadir al final una sección de "Preguntas Frecuentes" con las preguntas PAA proporcionadas
+    - Resaltar palabras y frases importantes con etiquetas <strong>
+    - INCLUIR al menos una tabla HTML comparativa entre las distintas opciones listadas
+    - INCLUIR viñetas (listas) para presentar servicios o características
+    - Optimizar el contenido para la palabra clave principal: "${keyword}"
+    - Usar divs con clases personalizadas para destacar información importante (como divs tipo "nota" o "advertencia")
+    - Configurar cualquier enlace externo con atributos rel="noopener nofollow"
+    - Usar un tono amistoso y profesional
+    - IMPORTANTE: Utilizar SOLAMENTE información basada en las fuentes proporcionadas
     - Generar código HTML limpio y semánticamente correcto`;
 
     // Formatear las fuentes y preguntas para el prompt
     const formattedSources = sources.filter(Boolean).join("\n\n--- FUENTE SIGUIENTE ---\n\n");
     const formattedQuestions = questions.map((q) => `- ${q}`).join("\n");
 
-    const userPrompt = `
+    const userPrompt = articleType === "informational"
+      ? `
     PALABRA CLAVE PRINCIPAL: ${keyword}
     
     PREGUNTAS A RESPONDER:
@@ -62,7 +90,26 @@ export async function generateSEOArticle({
     Si la palabra clave contiene términos como "mejores", "top", o parece solicitar una comparación (ej: "mejores dentistas de arica chile"),
     incluye un listado ordenado con opciones basándote en la información de las fuentes proporcionadas.
     No incluyas introducciones que mencionen "basado en las fuentes proporcionadas" o similares.
-    Escribe como si fueras un experto en el tema.`;
+    Escribe como si fueras un experto en el tema.`
+      : `
+    PALABRA CLAVE PRINCIPAL: ${keyword}
+    
+    LISTADO DE PREGUNTAS FRECUENTES (PARA EL FINAL DEL ARTÍCULO):
+    ${formattedQuestions}
+    
+    FUENTES DE INFORMACIÓN (USA EXCLUSIVAMENTE ESTA INFORMACIÓN):
+    ${formattedSources || "No se proporcionaron fuentes. Genera un directorio basado en conocimiento general sobre el tema, pero indica claramente que se recomienda consultar fuentes específicas para información más precisa."}
+    
+    Genera un artículo tipo DIRECTORIO en HTML que incluya:
+    1. Una introducción sobre el tipo de servicio/profesionales presentados
+    2. Un listado detallado de profesionales, empresas o lugares extraídos EXCLUSIVAMENTE de las fuentes
+    3. Para cada entrada del directorio incluye: nombre, descripción, datos de contacto, servicios, horarios, etc.
+    4. Una tabla comparativa de las diferentes opciones listadas
+    5. Al final, una sección de Preguntas Frecuentes que responda a las preguntas proporcionadas
+    6. Usa listas con viñetas para características o servicios
+    7. Usa divs con estilos personalizados para resaltar información clave
+    
+    Escribe como si fueras un experto en el tema y haz el contenido atractivo visualmente.`;
 
     // Llamada a la API de OpenAI
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
