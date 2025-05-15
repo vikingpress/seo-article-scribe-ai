@@ -1,5 +1,4 @@
 
-
 interface GenerateArticleParams {
   apiKey: string;
   questions: string[];
@@ -56,6 +55,7 @@ export async function generateSEOArticle({
       * Información sobre horarios si está disponible
       * Valoración o reseñas si están disponibles
     - Añadir al final una sección de "Preguntas Frecuentes" con las preguntas PAA proporcionadas
+    - IMPORTANTE: RESPONDER cada una de las preguntas frecuentes con párrafos detallados y completos
     - Resaltar palabras y frases importantes con etiquetas <strong>
     - INCLUIR al menos una tabla HTML comparativa entre las distintas opciones listadas
     - INCLUIR viñetas (listas) para presentar servicios o características
@@ -105,10 +105,11 @@ export async function generateSEOArticle({
     2. Un listado detallado de profesionales, empresas o lugares extraídos EXCLUSIVAMENTE de las fuentes
     3. Para cada entrada del directorio incluye: nombre, descripción, datos de contacto, servicios, horarios, etc.
     4. Una tabla comparativa de las diferentes opciones listadas
-    5. Al final, una sección de Preguntas Frecuentes que responda a las preguntas proporcionadas
+    5. Al final, una sección de Preguntas Frecuentes que RESPONDA A CADA UNA de las preguntas proporcionadas de manera completa y detallada
     6. Usa listas con viñetas para características o servicios
     7. Usa divs con estilos personalizados para resaltar información clave
     
+    IMPORTANTE: No solamente enumeres las preguntas, sino que proporciona una respuesta completa y detallada para cada una de ellas.
     Escribe como si fueras un experto en el tema y haz el contenido atractivo visualmente.`;
 
     // Llamada a la API de OpenAI
